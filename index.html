@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LizaClicker</title>
+  <!-- Google Fonts for cute, rounded typography -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300..700&family=Comfortaa:wght@300..700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <script>
+    if (window.location.protocol === 'file:') {
+      alert('Внимание: Браузер блокирует работу игры при открытии файла напрямую (через двойной клик / file://). Пожалуйста, откройте её в браузере по адресу: http://localhost:8080');
+    }
+  </script>
+</head>
+<body>
+  <div id="app">
+    <!-- SCREEN: MAIN MENU -->
+    <section id="screen-menu" class="screen active">
+      <div class="menu-overlay"></div>
+      <div class="menu-container">
+        <header class="menu-header animate-pop">
+          <div class="logo-wrapper">
+            <h1 class="logo-text">LizaClicker</h1>
+            <img src="Gifs/CatSpin.gif" alt="Spinning Cat" class="header-gif" draggable="false">
+          </div>
+          <p class="logo-subtext">Выбери режим игры и начни веселье!</p>
+        </header>
+
+        <!-- MUSIC PLAYER -->
+        <div class="music-player-widget glass animate-pop">
+          <div class="player-main-row">
+            <div class="player-info">
+              <span class="radio-label">🎵 Бурмалрадио вещает</span>
+              <span id="player-track-name" class="player-track-name">Загрузка...</span>
+            </div>
+            <div class="player-controls">
+              <button id="player-btn-prev" class="player-btn-round" title="Предыдущий трек">⏮</button>
+              <button id="player-btn-play" class="player-btn-round" title="Пауза / Старт">▶</button>
+              <button id="player-btn-next" class="player-btn-round" title="Следующий трек">⏭</button>
+            </div>
+            <div class="player-right">
+              <span class="volume-label">🔊</span>
+              <input type="range" id="player-volume" class="player-volume-slider" min="0" max="1" step="0.01" value="0.15" title="Громкость">
+            </div>
+          </div>
+          <div class="player-progress-row">
+            <span id="player-time-current" class="player-time">0:00</span>
+            <input type="range" id="player-progress" class="player-progress-slider" min="0" max="100" value="0" step="0.1" title="Прогресс">
+            <span id="player-time-duration" class="player-time">0:00</span>
+          </div>
+        </div>
+
+
+
+        <div class="modes-grid">
+          <!-- MODE: CLICKER -->
+          <div class="mode-card animate-slide-up" id="mode-clicker-btn">
+            <div class="mode-card-badge active-badge">Доступно</div>
+            <div class="mode-icon-wrapper">
+              <svg viewBox="0 0 24 24" class="mode-icon text-pink">
+                <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+              </svg>
+            </div>
+            <div class="mode-info">
+              <h2>Режим Кликера</h2>
+              <button class="btn btn-primary">Играть</button>
+            </div>
+          </div>
+
+          <!-- MODE: PUZZLES -->
+          <div class="mode-card animate-slide-up" id="mode-puzzles-btn" style="animation-delay: 0.1s;">
+            <div class="mode-card-badge active-badge">Доступно</div>
+            <div class="mode-icon-wrapper">
+              <svg viewBox="0 0 24 24" class="mode-icon text-pink">
+                <!-- Puzzle Piece Icon -->
+                <path d="M20.5 11H19V7c0-1.1-.9-2-2-2h-4V3.5c0-1.38-1.12-2.5-2.5-2.5S8 2.12 8 3.5V5H4c-1.1 0-2 .9-2 2v4h1.5c1.38 0 2.5 1.12 2.5 2.5S4.88 16 3.5 16H2v4c0 1.1.9 2 2 2h4v-1.5c0-1.38 1.12-2.5 2.5-2.5s2.5 1.12 2.5 2.5V22h4c1.1 0 2-.9 2-2v-4h1.5c1.38 0 2.5-1.12 2.5-2.5S21.88 11 20.5 11z"/>
+              </svg>
+            </div>
+            <div class="mode-info">
+              <h2>Режим Пазлов</h2>
+              <button class="btn btn-primary">Играть</button>
+            </div>
+          </div>
+        </div>
+        
+        <footer class="menu-footer">
+          <p>С любовью от Андрея ❤️</p>
+        </footer>
+      </div>
+    </section>
+
+    <!-- SCREEN: CLICKER MODE -->
+    <section id="screen-clicker" class="screen">
+      <div class="game-header">
+        <button id="btn-back-menu" class="btn btn-secondary btn-icon">
+          <svg viewBox="0 0 24 24" width="20" height="20">
+            <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z" fill="currentColor"/>
+          </svg>
+          В меню
+        </button>
+        <div class="game-header-title">Режим Кликера</div>
+        <button id="btn-reset-game" class="btn btn-text text-danger" title="Сбросить весь прогресс">
+          Сброс
+        </button>
+      </div>
+
+      <div class="game-layout">
+        <!-- LEFT: CLICKER PANEL -->
+        <div class="clicker-panel">
+          <div class="stats-card glass">
+            <div class="stat-group">
+              <span class="stat-label">Твоя любовь</span>
+              <div class="stat-value"><span id="hearts-counter">0</span> <span class="heart-symbol">❤️</span></div>
+            </div>
+            <div class="stat-subgroup">
+              <div class="stat-item">
+                <span class="sub-label">В секунду:</span>
+                <span class="sub-value" id="hearts-per-sec">0</span>
+              </div>
+              <div class="stat-item">
+                <span class="sub-label">За клик:</span>
+                <span class="sub-value" id="hearts-per-click">1</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="clicker-target-wrapper">
+            <!-- BOSS HP BAR -->
+            <div class="boss-card glass">
+              <div class="boss-info-row">
+                <span id="boss-title" class="boss-title">БОСС 1/6</span>
+                <span id="boss-hp-text" class="boss-hp-text">50 / 50 HP</span>
+              </div>
+              <div class="boss-hp-bar-bg">
+                <div id="boss-hp-bar-fill" class="boss-hp-bar-fill" style="width: 100%;"></div>
+              </div>
+            </div>
+
+            <div id="clicker-target" class="clicker-target">
+              <img id="clicker-image" src="Clicker/Click1.jpg" alt="Кликни меня" draggable="false">
+              <div id="final-boss-overlay" class="final-boss-overlay hidden">FINAL BOSS</div>
+              <div class="pulse-ring"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- RIGHT COLUMN -->
+        <div class="upgrades-column" id="upgrades-column">
+          <div class="upgrades-panel glass">
+            <div class="panel-header">
+              <h3>Магазин Улучшений</h3>
+            </div>
+            
+            <div class="upgrades-tabs">
+              <button class="tab-btn active" data-tab="tab-click">Клик</button>
+              <button class="tab-btn" data-tab="tab-auto">Авто</button>
+            </div>
+
+            <div class="upgrades-content">
+              <!-- TAB: CLICK UPGRADES -->
+              <div id="tab-click" class="tab-pane active">
+                <div class="upgrade-list" id="click-upgrades-list">
+                  <!-- Dynamically populated -->
+                </div>
+              </div>
+
+              <!-- TAB: AUTO UPGRADES -->
+              <div id="tab-auto" class="tab-pane">
+                <div class="upgrade-list" id="auto-upgrades-list">
+                  <!-- Dynamically populated -->
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SCREEN: PUZZLE MODE SELECTION -->
+    <section id="screen-puzzle-mode-select" class="screen">
+      <div class="menu-overlay"></div>
+      <div class="menu-container">
+        <div class="menu-header-back-row">
+          <button id="btn-mode-select-back" class="btn btn-secondary btn-icon">
+            <svg viewBox="0 0 24 24" width="20" height="20">
+              <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z" fill="currentColor"/>
+            </svg>
+            Назад
+          </button>
+        </div>
+
+        <header class="menu-header animate-pop">
+          <h1 class="logo-text">Режимы Пазлов</h1>
+          <p class="logo-subtext">Выбери, как ты хочешь собирать картину!</p>
+        </header>
+
+        <div class="modes-grid">
+          <!-- MODE: SLIDING -->
+          <div class="mode-card animate-slide-up" id="puzzle-mode-sliding-btn">
+            <div class="mode-icon-wrapper">
+              <svg viewBox="0 0 24 24" class="mode-icon text-pink">
+                <path d="M4 11h5V5H4v6zm0 7h5v-6H4v6zm6 0h5v-6h-5v6zm6 0h5v-6h-5v6zm-6-7h5V5h-5v6zm6-6v6h5V5h-5z"/>
+              </svg>
+            </div>
+            <div class="mode-info">
+              <h2>Пятнашки</h2>
+              <p class="mode-card-description">Передвигайте кусочки изображения по сетке, используя пустое поле, чтобы собрать картину.</p>
+              <button class="btn btn-primary">Играть</button>
+            </div>
+          </div>
+
+          <!-- MODE: JIGSAW -->
+          <div class="mode-card animate-slide-up" id="puzzle-mode-jigsaw-btn" style="animation-delay: 0.1s;">
+            <div class="mode-icon-wrapper">
+              <svg viewBox="0 0 24 24" class="mode-icon text-pink">
+                <path d="M20.5 11H19V7c0-1.1-.9-2-2-2h-4V3.5c0-1.38-1.12-2.5-2.5-2.5S8 2.12 8 3.5V5H4c-1.1 0-2 .9-2 2v4h1.5c1.38 0 2.5 1.12 2.5 2.5S4.88 16 3.5 16H2v4c0 1.1.9 2 2 2h4v-1.5c0-1.38 1.12-2.5 2.5-2.5s2.5 1.12 2.5 2.5V22h4c1.1 0 2-.9 2-2v-4h1.5c1.38 0 2.5-1.12 2.5-2.5S21.88 11 20.5 11z"/>
+              </svg>
+            </div>
+            <div class="mode-info">
+              <h2>Сборка в рамку</h2>
+              <p class="mode-card-description">Перетаскивайте или кликайте разбросанные детали с нуля, чтобы разложить их по своим местам в рамке.</p>
+              <button class="btn btn-primary">Играть</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SCREEN: JIGSAW PLAY MODE -->
+    <section id="screen-jigsaw" class="screen">
+      <div class="game-header">
+        <button id="btn-jigsaw-back" class="btn btn-secondary btn-icon">
+          <svg viewBox="0 0 24 24" width="20" height="20">
+            <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z" fill="currentColor"/>
+          </svg>
+          Назад
+        </button>
+        <div class="game-header-title">Сборка в рамку</div>
+        <button id="btn-jigsaw-reset" class="btn btn-text text-danger" title="Начать уровень заново">
+          Сбросить
+        </button>
+      </div>
+
+      <div class="puzzles-layout">
+        <!-- LEFT: PUZZLE PLAY AREA -->
+        <div class="puzzle-play-panel">
+          <div class="puzzle-stats-card glass">
+            <div class="puzzle-stat-item">
+              <span class="puzzle-stat-label">Сложность:</span>
+              <span class="puzzle-stat-value" id="jigsaw-difficulty-text">Легкий (3x3)</span>
+            </div>
+            <div class="puzzle-stat-item">
+              <span class="puzzle-stat-label">Собрано:</span>
+              <span class="puzzle-stat-value" id="jigsaw-placed-counter">0 / 0</span>
+            </div>
+            <div class="puzzle-stat-item">
+              <span class="puzzle-stat-label">Время:</span>
+              <span class="puzzle-stat-value" id="jigsaw-timer">0:00</span>
+            </div>
+          </div>
+
+          <div class="puzzle-board-wrapper">
+            <div id="jigsaw-board" class="puzzle-board">
+              <!-- Dynamically generated jigsaw target slots -->
+            </div>
+          </div>
+          
+          <div class="jigsaw-tray-container glass">
+            <p class="jigsaw-instruction puzzle-hint-text">Перетащите детали в рамку или выберите деталь кликом, а затем кликните нужную ячейку на доске.</p>
+            <div id="jigsaw-tray" class="jigsaw-tray">
+              <!-- Draggable puzzle pieces scattered here -->
+            </div>
+            <div id="jigsaw-victory-inline" class="victory-inline-panel hidden">
+              <span class="victory-message">🎉 Пазл собран!</span>
+              <div class="victory-actions">
+                <button id="btn-jigsaw-next" class="btn btn-primary">Далее</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- RIGHT: REFERENCE IMAGE & CONTROL PANEL -->
+        <div class="puzzle-info-panel glass">
+          <div class="panel-header">
+            <h3>Оригинал</h3>
+          </div>
+          <div class="puzzle-reference-wrapper">
+            <img id="jigsaw-reference-image" src="Clicker/Click1.jpg" alt="Оригинал" draggable="false">
+          </div>
+          <div class="puzzle-controls-box">
+            <div class="puzzle-level-selector">
+              <button class="btn btn-secondary btn-jigsaw-level-select active" data-level="1">1 уровень (3x3)</button>
+              <button class="btn btn-secondary btn-jigsaw-level-select" data-level="2">2 уровень (4x4)</button>
+              <button class="btn btn-secondary btn-jigsaw-level-select" data-level="3">3 уровень (5x5)</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SCREEN: PUZZLES MODE -->
+    <section id="screen-puzzles" class="screen">
+      <div class="game-header">
+        <button id="btn-puzzles-back" class="btn btn-secondary btn-icon">
+          <svg viewBox="0 0 24 24" width="20" height="20">
+            <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z" fill="currentColor"/>
+          </svg>
+          В меню
+        </button>
+        <div class="game-header-title">Режим Пазлов</div>
+        <button id="btn-puzzles-reset" class="btn btn-text text-danger" title="Начать уровень заново">
+          Сбросить
+        </button>
+      </div>
+
+      <div class="puzzles-layout">
+        <!-- LEFT: PUZZLE PLAY AREA -->
+        <div class="puzzle-play-panel">
+          <div class="puzzle-stats-card glass">
+            <div class="puzzle-stat-item">
+              <span class="puzzle-stat-label">Сложность:</span>
+              <span class="puzzle-stat-value" id="puzzle-difficulty-text">Легкий (3x3)</span>
+            </div>
+            <div class="puzzle-stat-item">
+              <span class="puzzle-stat-label">Ходы:</span>
+              <span class="puzzle-stat-value" id="puzzle-moves-counter">0</span>
+            </div>
+            <div class="puzzle-stat-item">
+              <span class="puzzle-stat-label">Время:</span>
+              <span class="puzzle-stat-value" id="puzzle-timer">0:00</span>
+            </div>
+          </div>
+
+          <div class="puzzle-board-wrapper">
+            <div id="puzzle-board" class="puzzle-board">
+              <!-- Dynamically generated puzzle pieces -->
+            </div>
+          </div>
+          <div id="sliding-victory-inline" class="victory-inline-panel glass hidden">
+            <span class="victory-message">🎉 Пазл собран!</span>
+            <div class="victory-actions">
+              <button id="btn-sliding-next" class="btn btn-primary">Далее</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- RIGHT: REFERENCE IMAGE & CONTROL PANEL -->
+        <div class="puzzle-info-panel glass">
+          <div class="panel-header">
+            <h3>Оригинал</h3>
+          </div>
+          <div class="puzzle-reference-wrapper">
+            <img id="puzzle-reference-image" src="Clicker/Click1.jpg" alt="Оригинал" draggable="false">
+          </div>
+          <div class="puzzle-controls-box">
+            <p class="puzzle-hint-text">Кликайте на соседние с пустой ячейкой детали, чтобы перемещать их.</p>
+            <div class="puzzle-level-selector">
+              <button class="btn btn-secondary btn-level-select active" data-level="1">1 уровень (3x3)</button>
+              <button class="btn btn-secondary btn-level-select" data-level="2">2 уровень (4x4)</button>
+              <button class="btn btn-secondary btn-level-select" data-level="3">3 уровень (5x5)</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- MODAL: VICTORY & GIFT ROULETTE -->
+  <div id="victory-modal" class="modal-overlay hidden">
+    <div class="modal-card glass animate-zoom-in">
+      
+      <!-- STAGE 1: GREETINGS & DECISION -->
+      <div id="victory-stage-initial" class="modal-stage">
+        <h2 class="modal-title animate-pulse-glow">Победа! 🎉</h2>
+        <p class="modal-subtitle">Вы одолели Финального Босса и прошли LizaClicker!</p>
+        <div class="modal-buttons">
+          <button id="btn-victory-prize" class="btn btn-primary btn-large">Получить приз 🎁</button>
+          <button id="btn-victory-menu" class="btn btn-secondary btn-large">Вернуться в главное меню</button>
+        </div>
+      </div>
+
+      <!-- STAGE 2: ROULETTE RUNNING -->
+      <div id="victory-stage-roulette" class="modal-stage hidden">
+        <h2 class="modal-title">Выбираем твой приз... 🎁</h2>
+        <p class="modal-subtitle">Секундочку, крутится рулетка призов!</p>
+        <div class="roulette-container">
+          <div class="roulette-glow"></div>
+          <div class="roulette-frame">
+            <img id="roulette-image" src="Gift/Gift1.jpg" alt="" draggable="false">
+          </div>
+        </div>
+      </div>
+
+      <!-- STAGE 3: WINNER PRESENTATION -->
+      <div id="victory-stage-result" class="modal-stage hidden">
+        <h2 class="modal-title animate-rainbow">Поздравляем! 🥳</h2>
+        <p class="modal-subtitle">Твой подарок готов к скачиванию!</p>
+        <div class="prize-result-container">
+          <img id="prize-result-image" src="Gift/Gift1.jpg" alt="" draggable="false">
+        </div>
+        <div class="modal-buttons">
+          <button id="btn-prize-download" class="btn btn-primary btn-large">Скачать</button>
+          <button id="btn-prize-next" class="btn btn-primary btn-large">Далее</button>
+          <button id="btn-prize-menu" class="btn btn-secondary btn-large">В главное меню</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+
+
+  <canvas id="victory-confetti" class="hidden"></canvas>
+
+  <div id="toast-container"></div>
+
+  <!-- JavaScript modules -->
+  <script type="module" src="js/main.js?v=2"></script>
+</body>
+</html>
